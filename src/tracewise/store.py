@@ -32,6 +32,12 @@ class ReviewError(Exception):
     pass
 
 
+def clean(text: str, limit: int = 500) -> str:
+    """Reasons and notes come from a model or an MCP client: keep printable text only, so a reason can't carry
+    terminal escape codes that change what a reviewer sees in the queue."""
+    return " ".join("".join(ch if ch.isprintable() else " " for ch in str(text)).split())[:limit]
+
+
 def now() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
 
@@ -49,7 +55,7 @@ class Store:
             cur = self.con.execute(
                 """INSERT INTO links (requirement, class_name, reason, proposed_by, proposed_at)
                    VALUES (?, ?, ?, ?, ?) ON CONFLICT (requirement, class_name) DO NOTHING""",
-                (requirement, class_name, reason, by, now()),
+                (requirement, class_name, clean(reason), clean(by, 80), now()),
             )
             if cur.rowcount:
                 return int(cur.lastrowid), True
@@ -67,7 +73,7 @@ class Store:
             cur = self.con.execute(
                 """UPDATE links SET status = ?, reviewed_by = ?, reviewed_at = ?, note = ?
                    WHERE id = ? AND status = 'proposed'""",
-                (decision, reviewer, now(), note, link_id),
+                (decision, clean(reviewer, 80), now(), clean(note), link_id),
             )
         row = self.get(link_id)
         if row is None:

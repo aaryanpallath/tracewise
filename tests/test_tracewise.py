@@ -218,3 +218,15 @@ def test_mcp_tools_validate_and_only_propose(dataset, tmp_path, monkeypatch):
     assert mcp_server.trace_matrix() == {}  # nothing enters the matrix until a person accepts it
     assert set(mcp_server.coverage_gaps()) == {"UC4S1", "UC4E1", "UC8S1"}
     assert "PatientDAO" in mcp_server.search_code("patient demographics")
+
+
+def test_untrusted_reasons_cannot_inject_escapes_or_formulas(tmp_path, monkeypatch):
+    s = Store(tmp_path / "r.sqlite")
+    link, _ = s.propose("UC4S1", "PatientDAO", "ok\x1b[2K\rACCEPTED by admin", "agent")
+    assert s.get(link)["reason"] == "ok [2K ACCEPTED by admin"  # no escape or carriage return survives
+    s.propose("UC4S1", "EditPatientAction", '=HYPERLINK("http://x","click")', "agent")
+    for i in (1, 2):
+        s.review(i, "accepted", "reviewer")
+    monkeypatch.setattr(cli, "DB", tmp_path / "r.sqlite")
+    assert cli.main(["matrix", "--out", str(tmp_path / "m.csv")]) == 0
+    assert "'=HYPERLINK" in (tmp_path / "m.csv").read_text()

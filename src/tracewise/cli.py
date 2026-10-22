@@ -24,11 +24,17 @@ from .store import ReviewError, Store
 DB = Path(os.environ.get("TRACEWISE_DB", DATA / "review.sqlite"))
 
 
+def cell(value: object) -> str:
+    """A CSV cell that a spreadsheet won't run as a formula (model-written reasons are untrusted text)."""
+    text = "" if value is None else str(value)
+    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
+
+
 def write_matrix(f, rows: list[dict]) -> None:
     w = csv.writer(f)
     cols = ("requirement", "class_name", "reason", "proposed_by", "reviewed_by", "reviewed_at", "note")
     w.writerow(["requirement", "class", *cols[2:]])
-    w.writerows([r[k] for k in cols] for r in rows)
+    w.writerows([cell(r[k]) for k in cols] for r in rows)
 
 
 def main(argv: list[str] | None = None) -> int:
