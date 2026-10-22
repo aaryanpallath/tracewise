@@ -1,0 +1,59 @@
+{
+  "requirements": 105,
+  "gold_links": 236,
+  "rankers": {
+    "vsm": {
+      "map": 0.292,
+      "recall@3": 0.225,
+      "recall@5": 0.356,
+      "recall@10": 0.479,
+      "recall@20": 0.593
+    },
+    "embed": {
+      "map": 0.237,
+      "recall@3": 0.203,
+      "recall@5": 0.258,
+      "recall@10": 0.335,
+      "recall@20": 0.47
+    },
+    "hybrid": {
+      "map": 0.37,
+      "recall@3": 0.343,
+      "recall@5": 0.411,
+      "recall@10": 0.487,
+      "recall@20": 0.593
+    }
+  },
+  "top3": {
+    "vsm": {
+      "precision": 0.168,
+      "recall": 0.225,
+      "f1": 0.192,
+      "f2": 0.21,
+      "proposed": 315,
+      "correct": 53,
+      "gold": 236,
+      "empty_kept_empty": "0/15"
+    },
+    "embed": {
+      "precision": 0.152,
+      "recall": 0.203,
+      "f1": 0.174,
+      "f2": 0.191,
+      "proposed": 315,
+      "correct": 48,
+      "gold": 236,
+      "empty_kept_empty": "0/15"
+    },
+    "hybrid": {
+      "precision": 0.257,
+      "recall": 0.343,
+      "f1": 0.294,
+      "f2": 0.322,
+      "proposed": 315,
+      "correct": 81,
+      "gold": 236,
+      "empty_kept_empty": "0/15"
+    }
+  }
+}

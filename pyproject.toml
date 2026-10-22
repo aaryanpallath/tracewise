@@ -1,0 +1,27 @@
+[project]
+name = "tracewise"
+version = "0.1.0"
+description = "Requirements-to-code traceability with AI agents: IR and embedding baselines, an LLM verifier and a tool-calling agent on a local model, evaluated against hand-made trace links for the iTrust health records system, with an MCP server and a human review queue"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "mcp>=2.3,<3"]
+
+[project.scripts]
+tracewise = "tracewise.cli:main"
+tracewise-mcp = "tracewise.mcp_server:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["SIM905"]  # word lists read better as one string
